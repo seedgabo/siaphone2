@@ -1,0 +1,18 @@
+<ion-navbar secondary *navbar>
+  <button menuToggle>
+    <ion-icon name="menu"></ion-icon>
+  </button>
+  <ion-title>Lista de CLientes</ion-title>
+</ion-navbar>
+
+<ion-content>
+  <ion-list>
+    <button [ngClass]="{'item-selected': seleccionado(cliente)}" ion-item *ngFor="#cliente of api.clientes" (click)="itemTapped($event, cliente)">
+      <ion-icon name="person" primary item-left></ion-icon>
+       <p>{{cliente.NOM_TER}}</p>
+      <div class="item-note" primary item-right>
+        <small>{{cliente.COD_TER}}</small>
+      </div>
+    </button>
+  </ion-list>
+</ion-content>

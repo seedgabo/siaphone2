@@ -1,0 +1,51 @@
+<ion-navbar *navbar primary>
+    <button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title><ion-icon name="log-in"></ion-icon> Login</ion-title>
+</ion-navbar>
+
+
+<ion-content  class="getting-started">
+
+    <ion-card *ngIf="api.user" padding >
+        <ion-item>
+            <ion-thumbnail item-left>
+                <img src="{{api.user.img}}" alt="" />
+            </ion-thumbnail>
+            <h2 primary>{{api.user.nombre}}</h2>
+            <h3 royal>{{api.user.email}}</h3>
+            <h5>Cliente Actual: <a href="#" *ngIf="api.cliente">{{api.cliente.NOM_TER}}</a></h5>
+
+        </ion-item>
+        <ion-list>
+          <ion-item>
+            <ion-label>Empresa</ion-label>
+            <ion-select [(ngModel)]="api.empresa" (ngModelChange)="api.setEmpresaSelected($event)">
+              <ion-option *ngFor="#empresa of api.empresas" value="{{empresa.id}}"> {{empresa.nombre}}</ion-option>
+              </ion-select>
+          </ion-item>
+        </ion-list>
+    </ion-card>
+
+    <ion-card padding>
+        <ion-list>
+            <ion-item>
+                <ion-label floating>Url</ion-label>
+                <ion-input type="url" [(ngModel)] = "username.url"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-label floating>Email</ion-label>
+                <ion-input type="email" [(ngModel)] = "username.username"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-label floating>Contraseña</ion-label>
+                <ion-input type="password" [(ngModel)] = "username.password"></ion-input>
+            </ion-item>
+            <button primary full (click) = "doLogin()"><ion-icon name="md-log-in"></ion-icon> Login</button>
+        </ion-list>
+    </ion-card>
+
+</ion-content>
