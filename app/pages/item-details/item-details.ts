@@ -1,4 +1,4 @@
-import {Page, NavController, NavParams, ViewController} from 'ionic-angular';
+import {Page, NavController, NavParams, ViewController, Toast} from 'ionic-angular';
 import {Component} from '@angular/core';
 import {Api} from '../../providers/api/api';
 @Component({
@@ -21,6 +21,7 @@ export class ItemDetailsPage {
   agregarAlCarrito(){
       this.api.addToCart(this.producto, this.pedidos).then((resp) =>{
           console.log(resp);
+          this.nav.present(Toast.create({message:"Agregado al Carrito", duration:2000, showCloseButton: true}));
       });
   }
 

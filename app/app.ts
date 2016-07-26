@@ -14,15 +14,15 @@ import {ImageManager} from "./providers/image-manager/image-manager";
 class MyApp {
     @ViewChild(Nav) nav: Nav;
     rootPage = HelloIonicPage;
-    pages: Array<{title: string, component: any, icon:string, primary?:boolean, secondary?:boolean, danger?:boolean, warning?:boolean, light?:boolean}>;
+    pages: Array<{title: string, component: any, icon:string, primary?:boolean, secondary?:boolean, danger?:boolean, disabled?:boolean}>;
     constructor(private platform: Platform,private api:Api) {
         this.api= api;
         this.initializeApp();
         this.pages = [
             { title: 'Home', component: HelloIonicPage, icon:"home" , primary:true},
             { title: 'Clientes', component: ListPage , icon : "people", primary:true},
-            { title: 'Catalogo', component: ProductosPage , icon : "pricetags", primary:true},
-            { title: 'Carrito', component: CarritoPage , icon : "cart", primary:true},
+            { title: 'Catalogo', component: ProductosPage , icon : "pricetags", primary:true, disabled: true},
+            { title: 'Carrito', component: CarritoPage , icon : "cart", primary:true, disabled: true},
         ];
     }
 

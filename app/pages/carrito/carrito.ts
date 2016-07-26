@@ -44,13 +44,27 @@ export class CarritoPage {
     }
 
     editar(producto){
-        this.api.findProducto(producto.ID).then((data)=>{
+        this.api.findProducto(producto.COD_REF).then((data)=>{
             let modal = Modal.create(ItemDetailsPage, {producto: data, pedidos: producto.cantidad, modal:true});
             this.nav.present(modal);
             modal.onDismiss(()=>{
                 this.getCarrito();
             })
 
+        });
+    }
+
+    procesarCarrito(){
+        this.api.sendCarrito(this.carrito).then((data)=>{
+            console.log(data);
+            this.api.storage.query("delete from carrito where COD_CLI = ?",[this.api.cliente.COD_TER]);
+        });
+    }
+
+    clearCarrito(){
+        this.api.storage.query("delete from carrito where COD_CLI = ?",[this.api.cliente.COD_TER]).then( resp =>{
+            this.nav.present(Toast.create({message:"Carrito Vaciado", duration: 1500}));
+            this.getCarrito();
         });
     }
 }

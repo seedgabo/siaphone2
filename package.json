@@ -37,7 +37,8 @@
     "ionic-plugin-keyboard",
     "cordova-plugin-x-toast",
     "cordova-plugin-file-transfer",
-    "cordova-plugin-crosswalk-webview"
+    "cordova-plugin-crosswalk-webview",
+    "phonegap-plugin-barcodescanner"
   ],
   "cordovaPlatforms": []
 }

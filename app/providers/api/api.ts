@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
 export class Api {
 
     storage = new Storage(SqlStorage);
-    data:any={};user:any={};empresas:any;empresa:any;clientes:any={};cliente:any;productos:Array<any>;
+    data:any={};user:any={};empresas:any;empresa:any;clientes:any={};cliente:any;productos:Array<any>;token:any;
 
     constructor(public http: Http) {
         this.initVar();
@@ -23,6 +23,7 @@ export class Api {
     */
     initVar(){
         this.storage.get("username").then( (data) => this.data.username = data );
+        this.storage.get("token").then( (data) => this.token = data );
         this.storage.get("password").then( (data) => this.data.password = data );
         this.storage.get("url").then( (data)      => this.data.url = data );
         this.storage.get("user").then((data)      => {this.user = data ? JSON.parse(data): undefined;});
@@ -62,8 +63,7 @@ export class Api {
     * @return {Observable<Object>} Observable que devolvera el usuario del sistema;
     */
     doLogin(){
-        let headers = new Headers();
-        headers.append("Authorization","Basic " + btoa(this.data.username + ":" + this.data.password));
+        let headers= this.setHeaders();
         return new Promise(resolve => {
             this.http.get(this.data.url + "api/auth", {headers : headers})
             .map(res => res.json())
@@ -79,9 +79,7 @@ export class Api {
     * @return {Observable<Array>}  Array de Empresas disponibles
     */
     getEmpresas(){
-        let headers = new Headers();
-        headers.append("Authorization","Basic " + btoa(this.data.username + ":" + this.data.password));
-        return new Promise(resolve => {
+        let headers= this.setHeaders();        return new Promise(resolve => {
             this.http.get(this.data.url + "api/getEmpresas", {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
@@ -111,9 +109,7 @@ export class Api {
     * @return {Observable<Array>}  Observable que retorna el array de clientes
     */
     getClientes(){
-        let headers = new Headers();
-        headers.append("Authorization","Basic " + btoa(this.data.username + ":" + this.data.password));
-        return new Promise(resolve => {
+        let headers= this.setHeaders();        return new Promise(resolve => {
             this.http.get(this.data.url + "api/"+ this.empresa +"/getClientes", {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
@@ -143,9 +139,7 @@ export class Api {
     * @return {Promise}      promesa que devolvera el array de productos
     */
     getProductos(p?: number){
-        let headers = new Headers();
-        headers.append("Authorization","Basic " + btoa(this.data.username + ":" + this.data.password));
-
+        let headers= this.setHeaders();
         return new Promise(resolve => {
             this.http.get(this.data.url + "api/"+ this.empresa +"/getProductos?page="+(p!= undefined ? p :-1), {headers : headers})
             .map(res => res.json())
@@ -157,9 +151,7 @@ export class Api {
     }
 
     searchProducto(query){
-        let headers = new Headers();
-        headers.append("Authorization","Basic " + btoa(this.data.username + ":" + this.data.password));
-
+        let headers= this.setHeaders();
         return new Promise(resolve => {
             this.http.get(this.data.url + "api/"+ this.empresa +"/searchProducto?query="+ query, {headers : headers})
             .map(res => res.json())
@@ -170,9 +162,7 @@ export class Api {
     }
 
     findProducto(id){
-        let headers = new Headers();
-        headers.append("Authorization","Basic " + btoa(this.data.username + ":" + this.data.password));
-
+        let headers= this.setHeaders();
         return new Promise(resolve => {
             this.http.get(this.data.url + "api/producto/"+ id, {headers : headers})
             .map(res => res.json())
@@ -181,6 +171,7 @@ export class Api {
             });
         });
     }
+
     addToCart(producto,cantidad){
         let sql = `insert or replace into carrito (ID, NOM_REF, NOM_TER, empresa_id, VAL_REF,COD_REF, COD_CLI, cantidad) values (
             (select ID from carrito where COD_REF = "${producto.COD_REF}" and COD_CLI = "${this.cliente.COD_TER}"),
@@ -198,5 +189,27 @@ export class Api {
 
     getCarrito(){
         return this.storage.query(`SELECT * FROM carrito WHERE COD_CLI = "${this.cliente.COD_TER}"`);
+    }
+
+    sendCarrito(carrito){
+        let headers= this.setHeaders();
+        return new Promise(resolve => {
+            this.http.post(this.data.url + "api/"+ this.empresa +"/procesarCarrito", JSON.stringify(carrito) ,{headers : headers})
+            .map(res => res.json())
+            .subscribe(data => {
+                resolve(data);
+            });
+        });
+    }
+
+    setHeaders(){
+        let headers = new Headers();
+        if(this.token == undefined)
+            headers.append("Authorization","Basic " + btoa(this.data.username + ":" + this.data.password));
+        else
+            headers.append("Auth-Token", this.token);
+
+        headers.append("Content-Type","application/json");
+        return headers;
     }
 }

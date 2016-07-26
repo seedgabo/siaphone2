@@ -6,8 +6,8 @@
 
   <ion-content>
     <ion-list>
-      <button  ion-item *ngFor="let p of pages" (click)="openPage(p)" menuClose>
-        <ion-icon name="{{p.icon}}" [attr.primary] = "p.primary" [attr.secondary] = "p.secondary" [attr.warning] = "p.warning"  item-left></ion-icon>
+      <button  ion-item *ngFor="let p of pages" (click)="openPage(p)" menuClose [disabled]="(!api.cliente && p.disabled)">
+        <ion-icon name="{{p.icon}}" [attr.primary] = "p.primary"  item-left></ion-icon>
         {{p.title}}
       </button>
     </ion-list>

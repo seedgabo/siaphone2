@@ -47,7 +47,8 @@
                 <ion-label floating>Contraseña</ion-label>
                 <ion-input type="password" [(ngModel)] = "username.password"></ion-input>
             </ion-item>
-            <button primary full (click) = "doLogin()"><ion-icon name="md-log-in"></ion-icon> Login</button>
+            <button primary  large full (click) = "doLogin()"><ion-icon name="md-log-in"></ion-icon> Login</button>
+            <button secondary large full (click) = "scanCode()"><ion-icon name="qr-scanner"></ion-icon></button>
         </ion-list>
     </ion-card>
 </ion-content>
