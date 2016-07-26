@@ -1,8 +1,13 @@
 <ion-navbar primary *navbar>
-  <button menuToggle *ngIf="!producto">
-    <ion-icon name="menu"></ion-icon>
-  </button>
-  <ion-title primary># {{producto.NOM_REF}}</ion-title>
+    <button menuToggle *ngIf="!producto">
+        <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title primary># {{producto.NOM_REF}}</ion-title>
+    <ion-buttons end *ngIf="modal">
+        <button (click)="dismiss()">
+            <ion-icon name="close"></ion-icon>
+        </button>
+    </ion-buttons>
 </ion-navbar>
 
 <ion-content class="card-background-page">
@@ -17,10 +22,11 @@
                 <strong>Existencia: </strong>{{producto.EXISTENCIA}}
             </p>
             <ion-row>
-                <ion-col button (click)= "pedidos= pedidos + 1"><ion-icon name="arrow-up"></ion-icon></ion-col>
+                <ion-col button light (click)= "pedidos= pedidos + 1"><ion-icon name="arrow-dropup"></ion-icon></ion-col>
                 <ion-col ion-item class="center"><ion-input [(ngModel)]="pedidos" type="number"></ion-input></ion-col>
-                <ion-col button (click)= "pedidos= pedidos - 1"><ion-icon name="arrow-down"></ion-icon></ion-col>
+                <ion-col button light (click)= "pedidos= pedidos - 1"><ion-icon name="arrow-dropdown"></ion-icon></ion-col>
             </ion-row>
+            <button (click)="agregarAlCarrito()" full> <ion-icon name="cart"></ion-icon> Agregar Al Carrito</button>
         </ion-card-content>
     </ion-card>
 </ion-content>

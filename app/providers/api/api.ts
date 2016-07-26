@@ -1,6 +1,6 @@
-import {Injectable} from 'angular2/core';
 import {Storage, SqlStorage} from 'ionic-angular';
-import {Http, Headers} from 'angular2/http';
+import {Http, Headers} from '@angular/http';
+import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
@@ -12,6 +12,8 @@ export class Api {
 
     constructor(public http: Http) {
         this.initVar();
+        // this.storage.query("DROP TABLE carrito");
+        this.storage.query('CREATE TABLE IF NOT EXISTS carrito (ID INTEGER PRIMARY KEY AUTOINCREMENT, NOM_REF TEXT, NOM_TER TEXT,empresa_id INTEGER, VAL_REF INTEGER, COD_REF TEXT, COD_CLI TEXT, cantidad INTEGER)');
     }
 
     /**
@@ -148,10 +150,53 @@ export class Api {
             this.http.get(this.data.url + "api/"+ this.empresa +"/getProductos?page="+(p!= undefined ? p :-1), {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
-                // this.storage.set("productos",JSON.stringify(data));
+                this.storage.set("productos",JSON.stringify(data));
                 resolve(data);
             });
         });
     }
 
+    searchProducto(query){
+        let headers = new Headers();
+        headers.append("Authorization","Basic " + btoa(this.data.username + ":" + this.data.password));
+
+        return new Promise(resolve => {
+            this.http.get(this.data.url + "api/"+ this.empresa +"/searchProducto?query="+ query, {headers : headers})
+            .map(res => res.json())
+            .subscribe(data => {
+                resolve(data);
+            });
+        });
+    }
+
+    findProducto(id){
+        let headers = new Headers();
+        headers.append("Authorization","Basic " + btoa(this.data.username + ":" + this.data.password));
+
+        return new Promise(resolve => {
+            this.http.get(this.data.url + "api/producto/"+ id, {headers : headers})
+            .map(res => res.json())
+            .subscribe(data => {
+                resolve(data);
+            });
+        });
+    }
+    addToCart(producto,cantidad){
+        let sql = `insert or replace into carrito (ID, NOM_REF, NOM_TER, empresa_id, VAL_REF,COD_REF, COD_CLI, cantidad) values (
+            (select ID from carrito where COD_REF = "${producto.COD_REF}" and COD_CLI = "${this.cliente.COD_TER}"),
+            "${producto.NOM_REF}",
+            "${this.cliente.NOM_TER}",
+            ${this.empresas[this.empresa].id},
+            ${producto.VAL_REF},
+            "${producto.COD_REF}",
+            "${this.cliente.COD_TER}",
+            ${cantidad}
+        );`
+        console.log(sql);
+        return this.storage.query(sql);
+    }
+
+    getCarrito(){
+        return this.storage.query(`SELECT * FROM carrito WHERE COD_CLI = "${this.cliente.COD_TER}"`);
+    }
 }

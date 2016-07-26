@@ -7,7 +7,7 @@
 
 
 <ion-content  class="getting-started">
-
+    <img src="img/logo.png"  class="logo" />
     <ion-card *ngIf="api.user" padding >
         <ion-item>
             <ion-thumbnail item-left>
@@ -16,19 +16,22 @@
             <h2 primary>{{api.user.nombre}}</h2>
             <h3 royal>{{api.user.email}}</h3>
             <h5>Cliente Actual: <a href="#" *ngIf="api.cliente">{{api.cliente.NOM_TER}}</a></h5>
-
         </ion-item>
         <ion-list>
           <ion-item>
             <ion-label>Empresa</ion-label>
             <ion-select [(ngModel)]="api.empresa" (ngModelChange)="api.setEmpresaSelected($event)">
-              <ion-option *ngFor="#empresa of api.empresas" value="{{empresa.id}}"> {{empresa.nombre}}</ion-option>
+              <ion-option *ngFor="let empresa of api.empresas" value="{{empresa.id}}"> {{empresa.nombre}}</ion-option>
               </ion-select>
           </ion-item>
         </ion-list>
+        <br><br>
+        <button outline  block small (click)="logout()">
+            Cerrar Sesión
+        </button>
     </ion-card>
 
-    <ion-card padding>
+    <ion-card padding *ngIf="!api.user">
         <ion-list>
             <ion-item>
                 <ion-label floating>Url</ion-label>
@@ -47,5 +50,4 @@
             <button primary full (click) = "doLogin()"><ion-icon name="md-log-in"></ion-icon> Login</button>
         </ion-list>
     </ion-card>
-
 </ion-content>

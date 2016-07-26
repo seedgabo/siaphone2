@@ -1,45 +1,47 @@
-import {App, IonicApp, Platform, MenuController} from 'ionic-angular';
+import {ViewChild,Component} from '@angular/core';
+import {ionicBootstrap,Platform, Nav} from 'ionic-angular';
 import {StatusBar} from 'ionic-native';
 import {HelloIonicPage} from './pages/hello-ionic/hello-ionic';
 import {ListPage} from './pages/list/list';
 import {ProductosPage} from './pages/productos/productos';
-import {Api} from "./providers/api/api";
-@App({
-  templateUrl: 'build/app.html',
-  config: {}, // http://ionicframework.com/docs/v2/api/config/Config/
-  providers: [Api]
+import {CarritoPage} from './pages/carrito/carrito';
+import {Api}  from './providers/api/api';
+import {ImageManager} from "./providers/image-manager/image-manager";
+
+@Component({
+    templateUrl: 'build/app.html'
 })
 class MyApp {
+    @ViewChild(Nav) nav: Nav;
+    rootPage = HelloIonicPage;
+    pages: Array<{title: string, component: any, icon:string, primary?:boolean, secondary?:boolean, danger?:boolean, warning?:boolean, light?:boolean}>;
+    constructor(private platform: Platform,private api:Api) {
+        this.api= api;
+        this.initializeApp();
+        this.pages = [
+            { title: 'Home', component: HelloIonicPage, icon:"home" , primary:true},
+            { title: 'Clientes', component: ListPage , icon : "people", primary:true},
+            { title: 'Catalogo', component: ProductosPage , icon : "pricetags", primary:true},
+            { title: 'Carrito', component: CarritoPage , icon : "cart", primary:true},
+        ];
+    }
 
-  rootPage: any = HelloIonicPage;
-  pages: Array<{title: string, component: any, icon:string, primary?:boolean, secondary?:boolean, danger?:boolean, warning?:boolean, light?:boolean}>;
+    initializeApp() {
+        this.platform.ready().then(() => {
+            StatusBar.styleDefault();
+        });
+    }
 
-  constructor(
-    private app: IonicApp,
-    private platform: Platform,
-    private menu: MenuController,
-    public api:Api
-  ) {
-    this.initializeApp();
-
-    this.pages = [
-      { title: 'Home', component: HelloIonicPage, icon:"home" , primary:true},
-      { title: 'Clientes', component: ListPage , icon : "people", secondary:true},
-      { title: 'Catalogo', component: ProductosPage , icon : "cart", warning:true},
-    ];
-  }
-
-  initializeApp() {
-    this.platform.ready().then(() => {
-      StatusBar.styleDefault();
-    });
-  }
-
-  openPage(page) {
-    // close the menu when clicking a link from the menu
-    this.menu.close();
-    // navigate to the new page if it is not the current page
-    let nav = this.app.getComponent('nav');
-    nav.setRoot(page.component);
-  }
+    openPage(page) {
+        this.nav.root = (page.component);
+    }
 }
+
+ionicBootstrap(MyApp, [Api,ImageManager], {});
+
+Number.prototype.format = function(n, x, s, c) {
+    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+    num = this.toFixed(Math.max(0, ~~n));
+
+    return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+};

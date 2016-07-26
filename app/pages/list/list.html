@@ -6,8 +6,9 @@
 </ion-navbar>
 
 <ion-content>
-  <ion-list>
-    <button [ngClass]="{'item-selected': seleccionado(cliente)}" ion-item *ngFor="#cliente of api.clientes" (click)="itemTapped($event, cliente)">
+    <ion-searchbar [(ngModel)]="query" debounce="700" placeholder="Buscar..."></ion-searchbar>
+  <ion-list [virtualScroll]="api.clientes | filterArr:query">
+    <button [ngClass]="{'item-selected': seleccionado(cliente)}" ion-item *virtualItem="let cliente" (click)="itemTapped($event, cliente)">
       <ion-icon name="person" primary item-left></ion-icon>
        <p>{{cliente.NOM_TER}}</p>
       <div class="item-note" primary item-right>

@@ -1,15 +1,15 @@
-import {Page, NavController, Loading,Alert} from 'ionic-angular';
+import {NavController, Loading,Alert} from 'ionic-angular';
 import {Api} from "../../providers/api/api";
-
-@Page({
+import {ImageManager} from "../../providers/image-manager/image-manager";
+import {Component} from '@angular/core';
+@Component({
     templateUrl: 'build/pages/hello-ionic/hello-ionic.html',
 })
 export class HelloIonicPage {
-    username:any;api:any;user:any;nav; empresas:any = [];
-    constructor(api :Api, nav:NavController) {
-        this.api = api;
-        this.nav = nav;
+    username:any;
+    constructor(private api:Api, private nav:NavController,  private img: ImageManager) {
         this.username = this.api.data;
+
     }
 
 
@@ -47,5 +47,16 @@ export class HelloIonicPage {
         this.api.getClientes().then((data) =>{
             console.log(data);
         });
+    }
+
+    logout(){
+        this.api.user = undefined;
+        this.api.setData("","","");
+    }
+
+    descargarImagenProductos(){
+        let loading = Loading.create({content:"Descargando Archivo Zip"});
+        this.nav.present(loading);
+        this.img.downloadZip( this.api.data.url + "all.zip", loading);
     }
 }

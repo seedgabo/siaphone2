@@ -1,13 +1,20 @@
 .getting-started {
-
-  p {
-    margin: 20px 0;
-    line-height: 22px;
-    font-size: 16px;
-  }
-
-  ion-card{
-     box-shadow: 0 27px 24px 0 rgba(0,0,0,0.2),0 40px 77px 0 rgba(0,0,0,0.22);
-  }
+    background-image: url(../../img/tecladoblanco.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    vertical-align: bottom;
+    ion-card{
+        margin-top: 2rem;
+        position:absolute;
+        top:27%;
+    }
+    .logo{
+        width: 70%;
+        display:block;
+        margin: 0 auto;
+        position: absolute;
+        left: 15%;
+        top:10%;
+    }
 
 }

@@ -1,0 +1,32 @@
+<ion-header>
+    <ion-navbar primary>
+        <button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>Carrito</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="carrito">
+    <ion-list>
+        <ion-item-sliding *ngFor="let producto of carrito">
+            <ion-item>
+                <h2 text-center>{{producto.NOM_REF}}</h2>
+                <h3><b>Precio:</b> {{toCurrency(producto.VAL_REF)}}
+                    <span style="float:right"> <b>Cantidad:</b> {{producto.cantidad}}</span>
+                </h3>
+                <h2 text-right><b>Total:</b> {{toCurrency(producto.cantidad*producto.VAL_REF)}}</h2>
+            </ion-item>
+            <ion-item-options side="right">
+                <button primary (click)="editar(producto)">
+                    <ion-icon name="create"></ion-icon>
+                    Editar
+                </button>
+                <button danger (click)="eliminar(producto)">
+                    <ion-icon name="trash"></ion-icon>
+                    Eliminar
+                </button>
+            </ion-item-options>
+        </ion-item-sliding>
+    </ion-list>
+</ion-content>
