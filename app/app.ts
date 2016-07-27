@@ -5,6 +5,7 @@ import {HelloIonicPage} from './pages/hello-ionic/hello-ionic';
 import {ListPage} from './pages/list/list';
 import {ProductosPage} from './pages/productos/productos';
 import {CarritoPage} from './pages/carrito/carrito';
+import {CarteraPage} from './pages/cartera/cartera';
 import {Api}  from './providers/api/api';
 import {ImageManager} from "./providers/image-manager/image-manager";
 
@@ -23,6 +24,7 @@ class MyApp {
             { title: 'Clientes', component: ListPage , icon : "people", primary:true},
             { title: 'Catalogo', component: ProductosPage , icon : "pricetags", primary:true, disabled: true},
             { title: 'Carrito', component: CarritoPage , icon : "cart", primary:true, disabled: true},
+            { title: 'Cartera', component: CarteraPage , icon : "briefcase", primary:true},
         ];
     }
 

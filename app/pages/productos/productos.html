@@ -23,8 +23,8 @@
     <div class="text-center" text-center>
         <ion-spinner *ngIf="procesando"></ion-spinner>
     </div>
-    <ion-list [virtualScroll]="api.productos">
-        <ion-item (click)="verProducto(producto)" *virtualItem="let producto">
+    <ion-list [virtualScroll]="api.productos" *ngIf="api.productos && api.productos.length > 0">
+        <button ion-item (click)="verProducto(producto)" *virtualItem="let producto">
             <ion-thumbnail item-left *ngIf="mostrarImagenes">
                 <img [src]="producto.imagen"/>
             </ion-thumbnail>
@@ -32,7 +32,7 @@
             <p>{{producto.VAL_REF}} $ </p>
             <small>{{producto.EXISTENCIA}} disponibles</small> |
             <small secondary>{{producto.COD_REF}}</small>
-        </ion-item>
+        </button>
     </ion-list>
 
     <!-- <ion-infinite-scroll (ionInfinite)="doInfinite($event)">

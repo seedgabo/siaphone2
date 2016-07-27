@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
 export class Api {
 
     storage = new Storage(SqlStorage);
-    data:any={};user:any={};empresas:any;empresa:any;clientes:any={};cliente:any;productos:Array<any>;token:any;
+    data:any={};user:any={};empresas:any;empresa:any;clientes:any={};cliente:any;productos:Array<any>;token:any;cartera:Array<any>;
 
     constructor(public http: Http) {
         this.initVar();
@@ -197,6 +197,19 @@ export class Api {
             this.http.post(this.data.url + "api/"+ this.empresa +"/procesarCarrito", JSON.stringify(carrito) ,{headers : headers})
             .map(res => res.json())
             .subscribe(data => {
+                resolve(data);
+            });
+        });
+    }
+
+    getCartera(){
+        let headers= this.setHeaders();
+        return new Promise(resolve => {
+            this.http.get(this.data.url + "api/"+ this.empresa +"/getCartera", {headers : headers})
+            .map(res => res.json())
+            .subscribe(data => {
+                if( data.cartera)
+                    this.storage.set("cartera",JSON.stringify(data.cartera));
                 resolve(data);
             });
         });

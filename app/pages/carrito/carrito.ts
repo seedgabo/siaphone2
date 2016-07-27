@@ -10,6 +10,7 @@ import {Api} from "../../providers/api/api";
 export class CarritoPage {
     api:Api;
     carrito:Array<any>=[];
+    button_disable = true;
     constructor(public nav: NavController ,api:Api) {
         this.api = api;
         this.nav = nav;
@@ -28,6 +29,7 @@ export class CarritoPage {
             for (var i = 0; i < response.res.rows.length; i++) {
                 this.carrito.push(response.res.rows[i]);
             }
+            this.button_disable =  (this.carrito.length == 0);
         });
     }
 
@@ -57,7 +59,10 @@ export class CarritoPage {
     procesarCarrito(){
         this.api.sendCarrito(this.carrito).then((data)=>{
             console.log(data);
-            this.api.storage.query("delete from carrito where COD_CLI = ?",[this.api.cliente.COD_TER]);
+            this.api.storage.query("delete from carrito where COD_CLI = ?",[this.api.cliente.COD_TER]).then( resp =>{
+                this.nav.present(Toast.create({message:"Carrito Procesado", duration: 1500}));
+                this.getCarrito();
+            });
         });
     }
 

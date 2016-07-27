@@ -1,0 +1,28 @@
+<ion-header>
+    <ion-navbar primary>
+        <button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>Cartera</ion-title>
+    </ion-navbar>
+    <ion-toolbar>
+        <ion-searchbar [(ngModel)]="query" debounce="700" placeholder="Buscar..."></ion-searchbar>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="cartera">
+    <ion-list [virtualScroll]="api.cartera |filterArr:query">
+        <button ion-item *virtualItem="let cliente">
+            <h2>{{cliente.NOM_TER}} $ </h2>
+            <h3>{{cliente.COD_TER}}</h3>
+            <small><b>Saldo:</b> {{toCurrency(cliente.SALDO)}}</small>
+            <small danger item-right><b>TOTAL:</b> {{toCurrency(cliente.TOTAL)}}</small>
+        </button>
+    </ion-list>
+</ion-content>
+
+<ion-footer>
+    <ion-toolbar light>
+        Total: {{ toCurrency(total) }}
+    </ion-toolbar>
+</ion-footer>
