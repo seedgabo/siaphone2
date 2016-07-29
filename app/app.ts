@@ -7,7 +7,6 @@ import {ProductosPage} from './pages/productos/productos';
 import {CarritoPage} from './pages/carrito/carrito';
 import {CarteraPage} from './pages/cartera/cartera';
 import {Api}  from './providers/api/api';
-import {ImageManager} from "./providers/image-manager/image-manager";
 
 @Component({
     templateUrl: 'build/app.html'
@@ -39,7 +38,7 @@ class MyApp {
     }
 }
 
-ionicBootstrap(MyApp, [Api,ImageManager], {});
+ionicBootstrap(MyApp, [Api], {});
 
 Number.prototype.format = function(n, x, s, c) {
     var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',

@@ -1,6 +1,5 @@
 import {NavController, Loading,Alert} from 'ionic-angular';
 import {Api} from "../../providers/api/api";
-import {ImageManager} from "../../providers/image-manager/image-manager";
 import {Component} from '@angular/core';
 import { BarcodeScanner } from 'ionic-native';
 @Component({
@@ -8,9 +7,8 @@ import { BarcodeScanner } from 'ionic-native';
 })
 export class HelloIonicPage {
     username:any;
-    constructor(private api:Api, private nav:NavController,  private img: ImageManager) {
+    constructor(private api:Api, private nav:NavController) {
         this.username = this.api.data;
-
     }
 
 
@@ -18,7 +16,7 @@ export class HelloIonicPage {
         let loading = Loading.create({content: "Iniciando Sesión", duration:10000});
         this.nav.present(loading);
         this.api.doLogin().then(data => {
-            if (data.status)
+            if (!data.email)
             {
                 let alert = Alert.create({
                     title: 'Error ' + data.status,
@@ -70,9 +68,4 @@ export class HelloIonicPage {
         });
     }
 
-    descargarImagenProductos(){
-        let loading = Loading.create({content:"Descargando Archivo Zip"});
-        this.nav.present(loading);
-        this.img.downloadZip( this.api.data.url + "all.zip", loading);
-    }
 }

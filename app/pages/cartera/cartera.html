@@ -11,9 +11,12 @@
 </ion-header>
 
 <ion-content class="cartera">
+    <div class="text-center" text-center>
+        <ion-spinner primary *ngIf="procesando"></ion-spinner>
+    </div>
     <ion-list [virtualScroll]="api.cartera |filterArr:query">
-        <button ion-item *virtualItem="let cliente">
-            <h2>{{cliente.NOM_TER}} $ </h2>
+        <button ion-item *virtualItem="let cliente" (click)="verCarteraCliente(cliente)">
+            <h2>{{cliente.NOM_TER}}</h2>
             <h3>{{cliente.COD_TER}}</h3>
             <small><b>Saldo:</b> {{toCurrency(cliente.SALDO)}}</small>
             <small danger item-right><b>TOTAL:</b> {{toCurrency(cliente.TOTAL)}}</small>

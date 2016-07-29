@@ -1,0 +1,59 @@
+<ion-header>
+    <ion-navbar primary>
+        <ion-title>{{cliente.NOM_TER}}</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="cartera-por-cliente">
+    <ion-card>
+
+        <ion-card-header text-center>
+            <ion-icon name="person" large></ion-icon>
+            {{ cliente.NOM_TER }}
+        </ion-card-header>
+
+        <ion-card-content text-justify>
+
+            <ion-list>
+                <ion-item>
+                    <b primary>Codigo:</b>  <span item-right>{{cliente.COD_TER}}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary># Factura:</b>  <span item-right>{{cliente.COD_TRN}}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary>Fecha de Documento:</b>  <span item-right>{{cliente.FEC_DOC}}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary>Fecha de Vencimiento:</b>  <span item-right>{{cliente.FEC_VEN}}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary>Fecha de Vencimiento:</b>  <span item-right>{{cliente.FEC_VEN}}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary>Valor:</b>  <span item-right>{{ toCurrency(cliente.VALOR) }}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary>De 1 a 30:</b>  <span [attr.danger]="cliente.A130 != '0.0' ? 'true' : null" item-right>{{ toCurrency(cliente.A130) }}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary>De 31 a 60:</b>  <span [attr.danger]="cliente.A3160 != '0.0' ? 'true' : null" item-right>{{ toCurrency(cliente.A3160) }}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary>De 61 a 90:</b>  <span [attr.danger]="cliente.A6190 != '0.0' ? 'true' : null" item-right>{{ toCurrency(cliente.A6190) }}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary>De 91 a 120:</b>  <span [attr.danger]="cliente.A91120 != '0.0' ? 'true' : null" item-right>{{ toCurrency(cliente.A91120) }}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary>Mas de 120:</b>  <span [attr.danger]="cliente.MAS120 != '0.0' ? 'true' : null" item-right>{{ toCurrency(cliente.MAS120) }}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary>Saldo:</b>  <span [attr.danger]="cliente.SALDO != '0.0' ? 'true' : null" item-right>{{ toCurrency(cliente.SALDO) }}</span>
+                </ion-item>
+            </ion-list>
+
+        </ion-card-content>
+
+    </ion-card>
+</ion-content>

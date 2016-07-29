@@ -31,6 +31,8 @@ export class Api {
         this.storage.get("empresa").then( (data)  => {this.empresa = data ? JSON.parse(data): undefined;});
         this.storage.get("clientes").then( (data) => {this.clientes = data ? JSON.parse(data): undefined;});
         this.storage.get("cliente").then( (data) =>  {this.cliente = data ? JSON.parse(data): undefined;});
+        this.storage.get("productos").then( (data) =>  {this.productos = data ? JSON.parse(data): undefined;});
+        this.storage.get("cartera").then( (data) =>  {this.cartera = data ? JSON.parse(data): undefined;});
     }
 
     /**
@@ -144,7 +146,7 @@ export class Api {
             this.http.get(this.data.url + "api/"+ this.empresa +"/getProductos?page="+(p!= undefined ? p :-1), {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
-                this.storage.set("productos",JSON.stringify(data));
+                this.storage.setJson("productos",data.data);
                 resolve(data);
             });
         });
@@ -209,7 +211,19 @@ export class Api {
             .map(res => res.json())
             .subscribe(data => {
                 if( data.cartera)
-                    this.storage.set("cartera",JSON.stringify(data.cartera));
+                    this.storage.setJson("cartera",data.cartera);
+                resolve(data);
+            });
+        });
+    }
+
+    getCarteraPorCliente(codigo){
+        let headers= this.setHeaders();
+        return new Promise(resolve => {
+            this.http.get(this.data.url + "api/"+ this.empresa +"/getCartera/" + codigo , {headers : headers})
+            .map(res => res.json())
+            .subscribe(data => {
+                if( data.cartera)
                 resolve(data);
             });
         });
