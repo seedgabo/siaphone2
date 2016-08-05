@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {NavController,Toast,Modal} from 'ionic-angular';
+import {NavController,Toast,Modal, Loading} from 'ionic-angular';
 import {ListPage} from "../list/list";
 import {ItemDetailsPage} from '../item-details/item-details';
 import {Api} from "../../providers/api/api";
@@ -57,10 +57,13 @@ export class CarritoPage {
     }
 
     procesarCarrito(){
+        let loading = Loading.create({content: "Procesando el Carrito... esto puede tardar unos segundos"});
+        this.nav.present(loading);
         this.api.sendCarrito(this.carrito).then((data)=>{
-            console.log(data);
             this.api.storage.query("delete from carrito where COD_CLI = ?",[this.api.cliente.COD_TER]).then( resp =>{
-                this.nav.present(Toast.create({message:"Carrito Procesado", duration: 1500}));
+                loading.dismiss().then(()=>{
+                    this.nav.present(Toast.create({message:"Carrito Procesado", duration: 1500}));
+                });
                 this.getCarrito();
             });
         });

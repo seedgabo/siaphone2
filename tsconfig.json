@@ -31,6 +31,8 @@
     "app/pipes/FilterArrayPipe.ts",
     "app/providers/api/api.ts",
     "typings/browser.d.ts",
-    "typings/browser/ambient/es6-shim/index.d.ts"
+    "typings/browser/ambient/es6-shim/index.d.ts",
+    "typings/index.d.ts",
+    "typings/modules/linq/index.d.ts"
   ]
 }

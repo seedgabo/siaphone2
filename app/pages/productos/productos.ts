@@ -1,10 +1,12 @@
 import {NavController, Toast, ActionSheet} from 'ionic-angular';
 import {Api} from "../../providers/api/api";
 import {ItemDetailsPage} from "../item-details/item-details";
+import {FilterArrayPipe} from '../../pipes/FilterArrayPipe';
 import {ListPage} from "../list/list";
 import {Component} from '@angular/core';
 @Component({
     templateUrl: 'build/pages/productos/productos.html',
+      pipes: [FilterArrayPipe]
 })
 export class ProductosPage {
     api:any;
@@ -26,13 +28,26 @@ export class ProductosPage {
     }
 
     getProductos(){
-        this.procesando= true;
-        this.api.getProductos(this.actualPage).then((response) => {
-            this.procesando = false;
-            this.currentPage = response.current_page;
-            this.lastPage = response.last_page;
-            this.api.productos = response.data;
-        });
+        let api = this.api;
+        if(this.api.offline){
+            this.productos = Enumerable.From(this.api.productos)
+                  .Where(function (x) { return x.empresa_id ==  api.empresa; })
+                //   .OrderBy(function (x) { return x.NOM_TER })
+                  .Select()
+                  .ToArray();
+                  this.currentPage = 1;
+                  this.lastPage = 1;
+                  console.log(this.productos);
+        }
+        else{
+            this.procesando= true;
+            this.api.getProductos(this.actualPage).then((response) => {
+                this.procesando = false;
+                this.currentPage = response.current_page;
+                this.lastPage = response.last_page;
+                this.productos  = response.data;
+            });
+        }
     }
 
     goNext(){
@@ -61,13 +76,15 @@ export class ProductosPage {
     }
 
     buscarProducto(){
-        this.procesando = true;
-        this.api.searchProducto(this.query).then((response) =>{
-            this.procesando = false;
-            this.currentPage = response.current_page;
-            this.lastPage = response.last_page;
-            this.api.productos = response.data;
-        });
+        if(!this.api.offline){
+            this.procesando = true;
+            this.api.searchProducto(this.query).then((response) =>{
+                this.procesando = false;
+                this.currentPage = response.current_page;
+                this.lastPage = response.last_page;
+                this.api.productos = response.data;
+            });
+        }
     }
 
     presentActionSheet() {

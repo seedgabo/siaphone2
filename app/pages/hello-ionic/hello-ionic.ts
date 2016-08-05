@@ -1,4 +1,4 @@
-import {NavController, Loading,Alert} from 'ionic-angular';
+import {NavController, Loading,Alert,Toast} from 'ionic-angular';
 import {Api} from "../../providers/api/api";
 import {Component} from '@angular/core';
 import { BarcodeScanner } from 'ionic-native';
@@ -7,8 +7,10 @@ import { BarcodeScanner } from 'ionic-native';
 })
 export class HelloIonicPage {
     username:any;
+
     constructor(private api:Api, private nav:NavController) {
         this.username = this.api.data;
+
     }
 
 
@@ -66,6 +68,21 @@ export class HelloIonicPage {
          }, (err) => {
              this.nav.present(Alert.create({title:"Oops", subTitle: "Ocurrió un error " + err, buttons:["Ok"]}))
         });
+    }
+
+    getDataOffline(event){
+            this.api.offline = !this.api.offline;
+            this.api.storage.set("offline",this.api.offline);
+            if(this.api.offline == true)
+            {
+                let loading = Loading.create({content: "Descargando datos offline"});
+                this.nav.present(loading);
+                this.api.getDataOffline().then(data => {
+                    loading.dismiss().then(() =>{
+                        this.nav.present(Toast.create({message:"Datos Descargados Correctamente", duration: 2000, closeButtonText: "listo"}));
+                    });
+                });
+            }
     }
 
 }

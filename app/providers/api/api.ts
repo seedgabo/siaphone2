@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
 export class Api {
 
     storage = new Storage(SqlStorage);
-    data:any={};user:any={};empresas:any;empresa:any;clientes:any={};cliente:any;productos:Array<any>;token:any;cartera:Array<any>;
+    data:any={};user:any={};empresas:any;empresa:any;clientes:any={};cliente:any;productos:Array<any>;token:any;cartera:Array<any>;offline:boolean;
 
     constructor(public http: Http) {
         this.initVar();
@@ -22,6 +22,7 @@ export class Api {
     * @return {null}
     */
     initVar(){
+        this.storage.get("offline").then( (data) => {if(data == "true")  this.offline = true; else this.offline == false; });
         this.storage.get("username").then( (data) => this.data.username = data );
         this.storage.get("token").then( (data) => this.token = data );
         this.storage.get("password").then( (data) => this.data.password = data );
@@ -238,5 +239,22 @@ export class Api {
 
         headers.append("Content-Type","application/json");
         return headers;
+    }
+
+    getDataOffline(){
+        let headers= this.setHeaders();
+        return new Promise(resolve => {
+            this.http.get(this.data.url + "api/getDataOffline", {headers : headers})
+            .map(res => res.json())
+            .subscribe(data => {
+                this.clientes = data.clientes;
+                this.productos = data.productos;
+                this.empresas = data.empresas;
+                this.storage.setJson("clientes", data.clientes);
+                this.storage.setJson("productos", data.productos);
+                this.storage.setJson("empresas", data.empresas);
+                resolve(data);
+            });
+        });
     }
 }
