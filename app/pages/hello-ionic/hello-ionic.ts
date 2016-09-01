@@ -1,4 +1,4 @@
-import {NavController, Loading,Alert,Toast} from 'ionic-angular';
+import {NavController, LoadingController,AlertController,ToastController} from 'ionic-angular';
 import {Api} from "../../providers/api/api";
 import {Component} from '@angular/core';
 import { BarcodeScanner } from 'ionic-native';
@@ -8,25 +8,25 @@ import { BarcodeScanner } from 'ionic-native';
 export class HelloIonicPage {
     username:any;
 
-    constructor(private api:Api, private nav:NavController) {
+    constructor(private api:Api, private nav:NavController, private loadingctrl:LoadingController,private alertctrl:AlertController, private toastctrl:ToastController) {
         this.username = this.api.data;
 
     }
 
 
     doLogin (){
-        let loading = Loading.create({content: "Iniciando Sesión", duration:10000});
-        this.nav.present(loading);
-        this.api.doLogin().then(data => {
+        let loading = this.loadingctrl.create({content: "Iniciando Sesión", duration:10000});
+        loading.present();
+        this.api.doLogin().then((data:any) => {
             if (!data.email)
             {
-                let alert = Alert.create({
+                let alert = this.alertctrl.create({
                     title: 'Error ' + data.status,
                     subTitle: data._body,
                     buttons: ['OK']
                 });
                 loading.dismiss();
-                this.nav.present(alert);
+                alert.present();
                 return;
             }
             this.api.setData(this.username.username, this.username.password, this.username.url);
@@ -66,7 +66,7 @@ export class HelloIonicPage {
              this.api.storage.set("token", data.token);
              this.doLogin();
          }, (err) => {
-             this.nav.present(Alert.create({title:"Oops", subTitle: "Ocurrió un error " + err, buttons:["Ok"]}))
+            let alert =this.alertctrl.create({title:"Oops", subTitle: "Ocurrió un error " + err, buttons:["Ok"]}).present();
         });
     }
 
@@ -75,11 +75,11 @@ export class HelloIonicPage {
             this.api.storage.set("offline",this.api.offline);
             if(this.api.offline == true)
             {
-                let loading = Loading.create({content: "Descargando datos offline"});
-                this.nav.present(loading);
+                let loading = this.loadingctrl.create({content: "Descargando datos offline"});
+                loading.present(loading);
                 this.api.getDataOffline().then(data => {
                     loading.dismiss().then(() =>{
-                        this.nav.present(Toast.create({message:"Datos Descargados Correctamente", duration: 2000, closeButtonText: "listo"}));
+                        this.toastctrl.create({message:"Datos Descargados Correctamente", duration: 2000, closeButtonText: "listo"}).present();
                     });
                 });
             }

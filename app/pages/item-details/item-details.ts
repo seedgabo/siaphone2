@@ -1,4 +1,4 @@
-import {Page, NavController, NavParams, ViewController, Toast} from 'ionic-angular';
+import {Page, NavController, NavParams, ViewController, ToastController} from 'ionic-angular';
 import {Component} from '@angular/core';
 import {Api} from '../../providers/api/api';
 @Component({
@@ -9,7 +9,7 @@ export class ItemDetailsPage {
   pedidos:number =0;
   api:Api
   modal = false;
-  constructor(private nav: NavController, navParams: NavParams, api:Api, private viewCtrl: ViewController) {
+  constructor(private nav: NavController, navParams: NavParams, api:Api, private viewCtrl: ViewController, private toast:ToastController) {
       this.api = api;
       this.producto = navParams.get('producto');
       if(navParams.get('pedidos')!= undefined)
@@ -21,7 +21,7 @@ export class ItemDetailsPage {
   agregarAlCarrito(){
       this.api.addToCart(this.producto, this.pedidos).then((resp) =>{
           console.log(resp);
-          this.nav.present(Toast.create({message:"Agregado al Carrito", duration:2000, showCloseButton: true}));
+          this.toast.create({message:"Agregado al Carrito", duration:2000, showCloseButton: true}).present();
       });
   }
 

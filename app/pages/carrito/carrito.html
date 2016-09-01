@@ -4,9 +4,14 @@
             <ion-icon name="menu"></ion-icon>
         </button>
         <ion-title>Carrito de {{api.cliente.NOM_TER}}</ion-title>
+        <ion-buttons end>
+            <button (click)="cambiarAgregando()">{{agregando}}</button>
+        </ion-buttons>
     </ion-navbar>
+    <ion-toolbar>
+        <ion-input [(ngModel)]="searchQuery" type="search" (change)="onInput($event)" placeholder="Codigo de producto aqui.."> </ion-input>
+    </ion-toolbar>
 </ion-header>
-
 <ion-content class="carrito">
     <ion-list>
         <ion-item-sliding *ngFor="let producto of carrito">
@@ -36,11 +41,12 @@
 
 </ion-content>
 <ion-footer>
+
     <ion-toolbar>
         <ion-grid>
             <ion-row>
-                <ion-col><button [disabled]="button_disable" full (click)="procesarCarrito()"><ion-icon name="basket"></ion-icon> Procesar</button></ion-col>
-                <ion-col><button [disabled]="button_disable" full danger (click)="clearCarrito()"><ion-icon name="hand"></ion-icon> Limpiar</button></ion-col>
+                <ion-col><button small [disabled]="button_disable" full (click)="procesarCarrito()"><ion-icon name="basket"></ion-icon> Procesar</button></ion-col>
+                <ion-col><button small [disabled]="button_disable" full danger (click)="clearCarrito()"><ion-icon name="hand"></ion-icon> Limpiar</button></ion-col>
             </ion-row>
         </ion-grid>
     </ion-toolbar>

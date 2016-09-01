@@ -14,7 +14,7 @@
     <div class="text-center" text-center>
         <ion-spinner primary *ngIf="procesando"></ion-spinner>
     </div>
-    <ion-list [virtualScroll]="api.cartera |filterArr:query">
+    <ion-list [virtualScroll]="cartera |filterArr:query">
         <button ion-item *virtualItem="let cliente" (click)="verCarteraCliente(cliente)">
             <h2>{{cliente.NOM_TER}}</h2>
             <h3>{{cliente.COD_TER}}</h3>

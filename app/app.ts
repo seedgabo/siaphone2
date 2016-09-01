@@ -7,7 +7,7 @@ import {ProductosPage} from './pages/productos/productos';
 import {CarritoPage} from './pages/carrito/carrito';
 import {CarteraPage} from './pages/cartera/cartera';
 import {Api}  from './providers/api/api';
-
+declare var Number:any;
 @Component({
     templateUrl: 'build/app.html'
 })

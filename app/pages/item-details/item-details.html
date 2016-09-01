@@ -1,14 +1,16 @@
-<ion-navbar primary *navbar>
-    <button menuToggle *ngIf="!producto">
-        <ion-icon name="menu"></ion-icon>
-    </button>
-    <ion-title primary># {{producto.NOM_REF}}</ion-title>
-    <ion-buttons end *ngIf="modal">
-        <button (click)="dismiss()">
-            <ion-icon name="close"></ion-icon>
+<ion-header>
+    <ion-navbar primary>
+        <button menuToggle *ngIf="!producto">
+            <ion-icon name="menu"></ion-icon>
         </button>
-    </ion-buttons>
-</ion-navbar>
+        <ion-title primary># {{producto.NOM_REF}}</ion-title>
+        <ion-buttons end *ngIf="modal">
+            <button (click)="dismiss()">
+                <ion-icon name="close"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
 
 <ion-content class="card-background-page">
     <ion-card>

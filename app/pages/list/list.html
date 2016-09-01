@@ -1,19 +1,20 @@
-<ion-navbar secondary *navbar>
-  <button menuToggle>
-    <ion-icon name="menu"></ion-icon>
-  </button>
-  <ion-title>Lista de CLientes</ion-title>
-</ion-navbar>
-
+<ion-header>
+    <ion-navbar secondary>
+        <button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>Lista de CLientes</ion-title>
+    </ion-navbar>
+</ion-header>
 <ion-content>
     <ion-searchbar [(ngModel)]="query" debounce="700" placeholder="Buscar..."></ion-searchbar>
-  <ion-list [virtualScroll]="clientes | filterArr:query">
-    <button [ngClass]="{'item-selected': seleccionado(cliente)}" ion-item *virtualItem="let cliente" (click)="itemTapped($event, cliente)">
-      <ion-icon name="person" primary item-left></ion-icon>
-       <p>{{cliente.NOM_TER}}</p>
-      <div class="item-note" primary item-right>
-        <small>{{cliente.COD_TER}}</small>
-      </div>
-    </button>
-  </ion-list>
+    <ion-list [virtualScroll]="clientes | filterArr:query">
+        <button [ngClass]="{'item-selected': seleccionado(cliente)}" ion-item *virtualItem="let cliente" (click)="itemTapped($event, cliente)">
+            <ion-icon name="person" primary item-left></ion-icon>
+            <p>{{cliente.NOM_TER}}</p>
+            <div class="item-note" primary item-right>
+                <small>{{cliente.COD_TER}}</small>
+            </div>
+        </button>
+    </ion-list>
 </ion-content>

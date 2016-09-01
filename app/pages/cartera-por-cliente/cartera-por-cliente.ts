@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {NavController, NavParams} from 'ionic-angular';
 import {Api} from '../../providers/api/api';
-
+declare var Number:any;
 @Component({
     templateUrl: 'build/pages/cartera-por-cliente/cartera-por-cliente.html',
 })

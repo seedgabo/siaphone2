@@ -9,7 +9,7 @@ export class Api {
 
     storage = new Storage(SqlStorage);
     data:any={};user:any={};empresas:any;empresa:any;clientes:any={};cliente:any;productos:Array<any>;token:any;cartera:Array<any>;offline:boolean;
-
+    cartera_total:number=0;
     constructor(public http: Http) {
         this.initVar();
         // this.storage.query("DROP TABLE carrito");
@@ -27,6 +27,7 @@ export class Api {
         this.storage.get("token").then( (data) => this.token = data );
         this.storage.get("password").then( (data) => this.data.password = data );
         this.storage.get("url").then( (data)      => this.data.url = data );
+        this.storage.get("cartera_total").then( (data)      => this.cartera_total = data );
         this.storage.get("user").then((data)      => {this.user = data ? JSON.parse(data): undefined;});
         this.storage.get("empresas").then((data)  => {this.empresas = data ? JSON.parse(data): undefined;});
         this.storage.get("empresa").then( (data)  => {this.empresa = data ? JSON.parse(data): undefined;});
@@ -175,19 +176,18 @@ export class Api {
         });
     }
 
-    addToCart(producto,cantidad){
-        let sql = `insert or replace into carrito (ID, NOM_REF, NOM_TER, empresa_id, VAL_REF,COD_REF, COD_CLI, cantidad) values (
-            (select ID from carrito where COD_REF = "${producto.COD_REF}" and COD_CLI = "${this.cliente.COD_TER}"),
-            "${producto.NOM_REF}",
-            "${this.cliente.NOM_TER}",
-            ${this.empresas[this.empresa].id},
-            ${producto.VAL_REF},
-            "${producto.COD_REF}",
-            "${this.cliente.COD_TER}",
-            ${cantidad}
-        );`
-        console.log(sql);
-        return this.storage.query(sql);
+    addToCart(producto,cantidad:number){
+            let sql = `insert or replace into carrito (ID, NOM_REF, NOM_TER, empresa_id, VAL_REF,COD_REF, COD_CLI, cantidad) values (
+                    (select ID from carrito where COD_REF = "${producto.COD_REF}" and COD_CLI = "${this.cliente.COD_TER}"),
+                    "${producto.NOM_REF}",
+                    "${this.cliente.NOM_TER}",
+                    ${this.empresas[this.empresa].id},
+                    ${producto.VAL_REF},
+                    "${producto.COD_REF}",
+                    "${this.cliente.COD_TER}",
+                    ${cantidad}
+                );`
+            return this.storage.query(sql);
     }
 
     getCarrito(){
@@ -250,9 +250,13 @@ export class Api {
                 this.clientes = data.clientes;
                 this.productos = data.productos;
                 this.empresas = data.empresas;
+                this.cartera = data.cartera;
+                this.cartera_total = data.total;
                 this.storage.setJson("clientes", data.clientes);
                 this.storage.setJson("productos", data.productos);
                 this.storage.setJson("empresas", data.empresas);
+                this.storage.setJson("cartera", data.cartera);
+                this.storage.set("cartera_total", data.total);
                 resolve(data);
             });
         });

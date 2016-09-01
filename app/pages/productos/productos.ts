@@ -1,9 +1,10 @@
-import {NavController, Toast, ActionSheet} from 'ionic-angular';
+import {NavController, ToastController, ActionSheetController} from 'ionic-angular';
 import {Api} from "../../providers/api/api";
 import {ItemDetailsPage} from "../item-details/item-details";
 import {FilterArrayPipe} from '../../pipes/FilterArrayPipe';
 import {ListPage} from "../list/list";
 import {Component} from '@angular/core';
+declare var Enumerable;
 @Component({
     templateUrl: 'build/pages/productos/productos.html',
       pipes: [FilterArrayPipe]
@@ -16,12 +17,13 @@ export class ProductosPage {
     mostrarImagenes:boolean = false;
     procesando:boolean = false;
     query= "";
-    constructor(public nav: NavController,api: Api) {
+    productos:any;
+    constructor(public nav: NavController,api: Api, private toast:ToastController,private actionsheet:ActionSheetController) {
         this.api = api;
         this.nav = nav;
         if( !this.api.cliente)
         {
-            this.nav.present(Toast.create({message:"Seleccione un cliente primero", duration: 3500}));
+            this.toast.create({message:"Seleccione un cliente primero", duration: 3500}).present();
             this.nav.setRoot(ListPage);
         }
         this.getProductos();
@@ -88,7 +90,7 @@ export class ProductosPage {
     }
 
     presentActionSheet() {
-        let actionSheet = ActionSheet.create({
+        let Sheet = this.actionsheet.create({
             title: 'Acciones',
             buttons: [
                 {
@@ -114,6 +116,6 @@ export class ProductosPage {
                 }
             ]
         });
-        this.nav.present(actionSheet);
+        Sheet.present()
     }
 }

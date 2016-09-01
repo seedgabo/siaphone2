@@ -4,6 +4,7 @@ import {FilterArrayPipe} from '../../pipes/FilterArrayPipe';
 import {Api} from "../../providers/api/api";
 import {Component} from '@angular/core';
 import {ProductosPage} from '../productos/productos';
+declare var Enumerable:any;
 @Component({
   templateUrl: 'build/pages/list/list.html',
     pipes: [FilterArrayPipe]
