@@ -224,7 +224,7 @@ export class Api {
             this.http.get(this.data.url + "api/"+ this.empresa +"/getCartera/" + codigo , {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
-                if( data.cartera)
+                if( data.cliente)
                 resolve(data);
             });
         });
@@ -247,6 +247,7 @@ export class Api {
             this.http.get(this.data.url + "api/getDataOffline", {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
+                console.log(data);
                 this.clientes = data.clientes;
                 this.productos = data.productos;
                 this.empresas = data.empresas;
