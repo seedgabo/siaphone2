@@ -9,18 +9,25 @@
                 <ion-icon name="close"></ion-icon>
             </button>
         </ion-buttons>
+        <ion-buttons end>
+            <button (click)="editprecio()">
+                <ion-icon name="create"></ion-icon>
+            </button>
+        </ion-buttons>
     </ion-navbar>
 </ion-header>
 
 <ion-content class="card-background-page">
     <ion-card>
-        <img src="{{producto.imagen}}" alt="Imagen de producto">
+        <img src="{{producto.imagen}}" alt="Imagen de producto" *ngIf="!api.offline">
+        <img src="{{imagenLocal(producto)}}" alt="Imagen de producto" *ngIf="api.offline">
 
         <ion-card-content>
             <ion-card-header>{{producto.NOM_REF}}</ion-card-header>
             <p>
                 <strong>Codigo:     </strong>{{producto.COD_REF}} <br>
                 <strong>Precio:     </strong>{{producto.VAL_REF}} <br>
+                <strong>Pedidos:    </strong>{{producto.SALD_PED}}<br>
                 <strong>Existencia: </strong>{{producto.EXISTENCIA}}
             </p>
             <ion-row>

@@ -1,16 +1,18 @@
-import {NavController, ToastController, ActionSheetController} from 'ionic-angular';
+import {NavController, ToastController, ActionSheetController, AlertController} from 'ionic-angular';
 import {Api} from "../../providers/api/api";
 import {ItemDetailsPage} from "../item-details/item-details";
 import {FilterArrayPipe} from '../../pipes/FilterArrayPipe';
 import {ListPage} from "../list/list";
 import {Component} from '@angular/core';
 declare var Enumerable;
+declare var window:any;
+declare var cordova:any;
 @Component({
     templateUrl: 'build/pages/productos/productos.html',
       pipes: [FilterArrayPipe]
 })
 export class ProductosPage {
-    api:any;
+    api:Api;
     actualPage:number=1;
     currentPage:number=0;
     lastPage:number=0;
@@ -18,7 +20,7 @@ export class ProductosPage {
     procesando:boolean = false;
     query= "";
     productos:any;
-    constructor(public nav: NavController,api: Api, private toast:ToastController,private actionsheet:ActionSheetController) {
+    constructor(public nav: NavController,api: Api, private toast:ToastController,private actionsheet:ActionSheetController, public alert:AlertController) {
         this.api = api;
         this.nav = nav;
         if( !this.api.cliente)
@@ -27,6 +29,15 @@ export class ProductosPage {
             this.nav.setRoot(ListPage);
         }
         this.getProductos();
+    }
+
+
+
+    ionViewDidEnter(){
+        window.setTimeout(()=>{
+            window.document.getElementsByClassName('searchbar-input')[0].focus();
+            this.query = "";
+        },500);
     }
 
     getProductos(){
@@ -43,7 +54,7 @@ export class ProductosPage {
         }
         else{
             this.procesando= true;
-            this.api.getProductos(this.actualPage).then((response) => {
+            this.api.getProductos(this.actualPage).then((response:any) => {
                 this.procesando = false;
                 this.currentPage = response.current_page;
                 this.lastPage = response.last_page;
@@ -67,7 +78,7 @@ export class ProductosPage {
     }
 
     doInfinite(infiniteScroll){
-        this.api.getProductos(this.actualPage).then((response) => {
+        this.api.getProductos(this.actualPage).then((response:any) => {
             this.api.productos = response;
             this.actualPage++;
             if(this.api.productos.length){
@@ -80,11 +91,11 @@ export class ProductosPage {
     buscarProducto(){
         if(!this.api.offline){
             this.procesando = true;
-            this.api.searchProducto(this.query).then((response) =>{
+            this.api.searchProducto(this.query).then((response:any) =>{
                 this.procesando = false;
                 this.currentPage = response.current_page;
                 this.lastPage = response.last_page;
-                this.api.productos = response.data;
+                this.productos = response.data;
             });
         }
     }
@@ -117,5 +128,17 @@ export class ProductosPage {
             ]
         });
         Sheet.present()
+    }
+
+    verPath(){
+        this.alert.create({
+            title: "Ver Archivos Localmente",
+            message: "Guarde las imagenes en el directorio del telefono: " + cordova.file.externalApplicationStorageDirectory + this.api.empresa + "/productos/. \n  como jpg",
+            buttons: ["Ok"]
+        }).present();
+    }
+
+    imagenLocal(producto:any){
+        return cordova.file.externalApplicationStorageDirectory + this.api.empresa + "/productos/" + producto.COD_REF.trim()  + ".jpg";
     }
 }

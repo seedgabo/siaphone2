@@ -9,31 +9,101 @@ declare var Enumerable:any;
     templateUrl: 'build/pages/carrito/carrito.html',
 })
 export class CarritoPage {
-    api:Api;
     carrito:Array<any>=[];
     button_disable = true;
     searchQuery:string="";
     productos:any;
-    agregando:number =12;
-    constructor(public nav: NavController ,api:Api, private toastctrl:ToastController,private modalctrl:ModalController, private loadingctrl:LoadingController, private alert:AlertController) {
-        this.api = api;
+    agregando:any =0;
+    total:any=0;
+    constructor(public nav:NavController,private api:Api, private toastctrl:ToastController,private modalctrl:ModalController, private loadingctrl:LoadingController, private alert:AlertController) {
         this.nav = nav;
         if( !this.api.cliente)
         {
             this.toastctrl.create({message:"Seleccione un cliente primero", duration: 3500}).present();
             this.nav.setRoot(ListPage);
         }
+        this.api.storage.get("agregando-"+ this.api.empresa).then((data)=>{ data? this.agregando =  data : this.agregando = 12});
         this.getCarrito();
+        this.api.getCarritos().then(response=>{
+                console.log(response.res);
+        });
     }
 
     getCarrito(){
         this.carrito = [];
         this.api.getCarrito().then(response =>{
+            this.total = 0;
             for (var i = 0; i < response.res.rows.length; i++) {
                 this.carrito.push(response.res.rows[i]);
+                this.total += response.res.rows[i].cantidad * response.res.rows[i].VAL_REF;
             }
+            console.log(this.carrito);
             this.button_disable =  (this.carrito.length == 0);
         });
+    }
+
+    cambiarPrecio(producto){
+        let prompt = this.alert.create({
+            title: 'Cambiar Precio:',
+            inputs: [
+                {
+                    name: 'precio',
+                    placeholder: 'precio',
+                    type: 'number',
+                    value: producto.VAL_REF
+                },
+            ],
+            buttons: [
+                {
+                    text: 'Cancelar',
+                    handler: data => {
+                        console.log('Cancel clicked');
+                    }
+                },
+                {
+                    text: 'Guardar',
+                    handler: data => {
+                        this.api.storage.query("update carrito set VAL_REF = ? where ID= ?",[parseFloat(data.precio), producto.ID]).then( resp =>{
+                            this.toastctrl.create({message:"Actualizado Correctamente", duration: 1500}).present();
+                            this.getCarrito();
+                        });
+                    }
+                }
+            ]
+        });
+        prompt.present();
+    }
+
+    cambiarCantidad(producto){
+        let prompt = this.alert.create({
+            title: 'Cambiar Cantidad:',
+            inputs: [
+                {
+                    name: 'cantidad',
+                    placeholder: 'cantidad',
+                    type: 'number',
+                    value: producto.cantidad
+                },
+            ],
+            buttons: [
+                {
+                    text: 'Cancelar',
+                    handler: data => {
+                        console.log('Cancel clicked');
+                    }
+                },
+                {
+                    text: 'Guardar',
+                    handler: data => {
+                        this.api.storage.query("update carrito set cantidad = ? where ID= ?",[parseInt(data.cantidad), producto.ID]).then( resp =>{
+                            this.toastctrl.create({message:"Actualizado Correctamente", duration: 1500}).present();
+                            this.getCarrito();
+                        });
+                    }
+                }
+            ]
+        });
+        prompt.present();
     }
 
     toCurrency(number:string){
@@ -69,6 +139,10 @@ export class CarritoPage {
                 });
                 this.getCarrito();
             });
+        }).catch((error)=>{
+            loading.dismiss().then(()=>{
+                this.alert.create({title:"ERROR", message: "Parece que hubo un error al procesar el pedido, verifique en portal web y compruebe su conexion a internet"});
+            })
         });
     }
 
@@ -91,6 +165,7 @@ export class CarritoPage {
                 text: 'Guardar',
                 handler: data => {
                     this.agregando =  parseInt(data.agregando);
+                    this.api.storage.set("agregando-"+ this.api.empresa,data.agregando);
                 }
             }
         ]}).present();
@@ -98,24 +173,70 @@ export class CarritoPage {
 
     onInput(ev){
         let q = this.searchQuery;
-        if(q.length == 0) return;
+
+        if(q.length == 0)
+            return;
+
         let producto = Enumerable.From(this.api.productos)
-        .Where(function (x) { return x.COD_REF.trim() == q.trim(); })
+        .Where((x)=> { return x.COD_REF.trim() == q.trim(); })
+        .Where((x)=> { return x.empresa_id == this.api.empresa; })
         .Select()
         .ToArray()[0];
+
         if(producto)
         {
-            this.api.addToCart( producto, this.findByCod(q) + this.agregando);
+            if(this.agregando == 0)
+            {
+                 this.preguntarCantidad(producto);
+                 ev.target.focus();
+                 return;
+            }
+            else
+            {
+                this.api.addToCart(producto, parseInt(this.findByCod(q)) +  parseInt(this.agregando));
+            }
             this.getCarrito();
             ev.target.focus();
             this.searchQuery = "";
         }
         else
         {
-            ev.target.focus();
             this.searchQuery = "";
-            this.toastctrl.create({message:"No se consiguió ninguno producto con este codigo", duration: 2000,position:"top"}).present();
+            this.toastctrl.create({message:"No se consiguió ninguno producto con este codigo", duration: 2000,position:"top"}).present().then(()=>{
+                ev.target.focus();
+            });
         }
+    }
+
+    preguntarCantidad(producto){
+        let prompt = this.alert.create({
+            title: 'Cantidad:',
+            inputs: [
+                {
+                    name: 'cantidad',
+                    placeholder: 'cantidad',
+                    type: 'number',
+                    value: producto.cantidad
+                },
+            ],
+            buttons: [
+                {
+                    text: 'Cancelar',
+                    handler: data => {
+                        console.log('Cancel clicked');
+                    }
+                },
+                {
+                    text: 'Guardar',
+                    handler: (data) => {
+                            this.api.addToCart( producto, parseInt(this.findByCod(this.searchQuery)) + parseInt(data.cantidad));
+                            this.getCarrito();
+                            this.searchQuery = "";
+                    }
+                }
+            ]
+        });
+        prompt.present();
     }
 
     findByCod(codigo){

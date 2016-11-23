@@ -5,40 +5,52 @@
     </button>
     <ion-title> Productos | {{currentPage}} de {{lastPage}} </ion-title>
     <ion-buttons end>
-      <button (click)="goPrevious()" [disabled]="currentPage == 1">
+      <button (click)="goPrevious()" [disabled]="currentPage == 1" *ngIf="!api.offline">
         <ion-icon name="arrow-dropleft"></ion-icon>
       </button>
-      <button (click)="goNext()" [disabled]="currentPage == lastPage">
+      <button (click)="goNext()" [disabled]="currentPage == lastPage" *ngIf="!api.offline">
         <ion-icon name="arrow-dropright"></ion-icon>
+      </button>
+      <button (click)="verPath()">
+        <ion-icon name="help"></ion-icon>
       </button>
       <button (click)="presentActionSheet()">
           <ion-icon name="more"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
+  <ion-toolbar>
+      <ion-searchbar [(ngModel)]="query" debounce="500" autocomplete="on" placeholder="Buscar" (ionInput)="buscarProducto()" cancelButtonText="Cancelar" hideCancelButton="false"></ion-searchbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content  class="productos">
-    <ion-searchbar [(ngModel)]="query" debounce="500" autocomplete="on" (ionInput)="buscarProducto()"></ion-searchbar>
     <div class="text-center" text-center>
         <ion-spinner *ngIf="procesando"></ion-spinner>
     </div>
     <ion-list [virtualScroll]="productos | filterArr:query" *ngIf="api.offline">
         <button ion-item (click)="verProducto(producto)" *virtualItem="let producto">
-            <ion-thumbnail item-left *ngIf="mostrarImagenes">
+            <ion-thumbnail item-left *ngIf="mostrarImagenes && api.offline">
+                <img [src]="imagenLocal(producto)"/>
+            </ion-thumbnail>
+            <ion-thumbnail item-left *ngIf="mostrarImagenes && !api.offline">
                 <img [src]="producto.imagen"/>
             </ion-thumbnail>
             <h2>{{producto.NOM_REF}}</h2>
             <p>{{producto.VAL_REF}} $ </p>
             <small>{{producto.EXISTENCIA}} disponibles</small> |
+            <small>{{producto.SALD_PED}} pedidos</small> |
             <small secondary>{{producto.COD_REF}}</small>
         </button>
     </ion-list>
 
     <ion-list [virtualScroll]="productos" *ngIf="!api.offline &&productos && productos.length > 0">
         <button ion-item (click)="verProducto(producto)" *virtualItem="let producto">
-            <ion-thumbnail item-left *ngIf="mostrarImagenes">
+            <!-- <ion-thumbnail item-left *ngIf="mostrarImagenes && !api.offline">
                 <img [src]="producto.imagen"/>
+            </ion-thumbnail> -->
+            <ion-thumbnail item-left *ngIf="mostrarImagenes">
+                <img [src]="imagenLocal(producto)"/>
             </ion-thumbnail>
             <h2>{{producto.NOM_REF}}</h2>
             <p>{{producto.VAL_REF}} $ </p>
@@ -47,9 +59,7 @@
         </button>
     </ion-list>
 
-    <!-- <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-        <ion-infinite-scroll-content
-        loadingText="Cargando mas productos...">
-    </ion-infinite-scroll-content>
-</ion-infinite-scroll> -->
+
 </ion-content>
+<ion-footer>
+</ion-footer>

@@ -15,13 +15,15 @@
 <ion-content class="carrito">
     <ion-list>
         <ion-item-sliding *ngFor="let producto of carrito">
-            <ion-item>
+            <button ion-item>
                 <h2 text-center>{{producto.NOM_REF}}</h2>
-                <h3><b>Precio:</b> {{toCurrency(producto.VAL_REF)}}
-                    <span style="float:right"> <b>Cantidad:</b> {{producto.cantidad}}</span>
+                <h3>
+                <b>Precio:</b> {{toCurrency(producto.VAL_REF)}} <br>
+                <span> <b>Cantidad:</b> {{producto.cantidad}}</span>  <br>
+                <span secondary text-right> {{producto.COD_REF}}</span>
                 </h3>
                 <h2 text-right><b>Total:</b> {{toCurrency(producto.cantidad*producto.VAL_REF)}}</h2>
-            </ion-item>
+            </button>
             <ion-item-options side="right">
                 <button primary (click)="editar(producto)">
                     <ion-icon name="create"></ion-icon>
@@ -32,17 +34,25 @@
                     Eliminar
                 </button>
             </ion-item-options>
+            <ion-item-options side="left">
+                <button *ngIf="api.user.COD_CLI == '' || api.user.cOD_CLI == null "  (click)="cambiarPrecio(producto)">
+                    <ion-icon name="cash"></ion-icon>
+                    Precio
+                </button>
+                <button  (click)="cambiarCantidad(producto)">
+                    <ion-icon name="grid"></ion-icon>
+                    Cantidad
+                </button>
+            </ion-item-options>
         </ion-item-sliding>
     </ion-list>
-
     <h2 *ngIf="carrito.length < 1" text-center>
         El Carrito de {{api.cliente.NOM_TER}} esta Vacio
     </h2>
-
 </ion-content>
 <ion-footer>
-
     <ion-toolbar>
+         <b>TOTAL:</b> {{toCurrency(total)}}
         <ion-grid>
             <ion-row>
                 <ion-col><button small [disabled]="button_disable" full (click)="procesarCarrito()"><ion-icon name="basket"></ion-icon> Procesar</button></ion-col>

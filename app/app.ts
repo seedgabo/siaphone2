@@ -5,6 +5,7 @@ import {HelloIonicPage} from './pages/hello-ionic/hello-ionic';
 import {ListPage} from './pages/list/list';
 import {ProductosPage} from './pages/productos/productos';
 import {CarritoPage} from './pages/carrito/carrito';
+import {CarritosPage} from './pages/carritos/carritos';
 import {CarteraPage} from './pages/cartera/cartera';
 import {Api}  from './providers/api/api';
 declare var Number:any;
@@ -24,6 +25,7 @@ class MyApp {
             { title: 'Catalogo', component: ProductosPage , icon : "pricetags", primary:true, disabled: true},
             { title: 'Carrito', component: CarritoPage , icon : "cart", primary:true, disabled: true},
             { title: 'Cartera', component: CarteraPage , icon : "briefcase", primary:true},
+            { title: 'Carritos por Procesar', component: CarritosPage , icon : "cart", secondary:true},
         ];
     }
 

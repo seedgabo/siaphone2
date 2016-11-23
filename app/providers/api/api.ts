@@ -68,7 +68,7 @@ export class Api {
     */
     doLogin(){
         let headers= this.setHeaders();
-        return new Promise(resolve => {
+        return new Promise((resolve,reject) => {
             this.http.get(this.data.url + "api/auth", {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
@@ -83,7 +83,7 @@ export class Api {
     * @return {Observable<Array>}  Array de Empresas disponibles
     */
     getEmpresas(){
-        let headers= this.setHeaders();        return new Promise(resolve => {
+        let headers= this.setHeaders();        return new Promise((resolve,reject) => {
             this.http.get(this.data.url + "api/getEmpresas", {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
@@ -113,7 +113,7 @@ export class Api {
     * @return {Observable<Array>}  Observable que retorna el array de clientes
     */
     getClientes(){
-        let headers= this.setHeaders();        return new Promise(resolve => {
+        let headers= this.setHeaders();        return new Promise((resolve,reject) => {
             this.http.get(this.data.url + "api/"+ this.empresa +"/getClientes", {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
@@ -144,7 +144,7 @@ export class Api {
     */
     getProductos(p?: number){
         let headers= this.setHeaders();
-        return new Promise(resolve => {
+        return new Promise((resolve,reject) => {
             this.http.get(this.data.url + "api/"+ this.empresa +"/getProductos?page="+(p!= undefined ? p :-1), {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
@@ -156,7 +156,7 @@ export class Api {
 
     searchProducto(query){
         let headers= this.setHeaders();
-        return new Promise(resolve => {
+        return new Promise((resolve,reject) => {
             this.http.get(this.data.url + "api/"+ this.empresa +"/searchProducto?query="+ query, {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
@@ -167,7 +167,7 @@ export class Api {
 
     findProducto(id){
         let headers= this.setHeaders();
-        return new Promise(resolve => {
+        return new Promise((resolve,reject) => {
             this.http.get(this.data.url + "api/producto/"+ id, {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
@@ -177,42 +177,52 @@ export class Api {
     }
 
     addToCart(producto,cantidad:number){
-            let sql = `insert or replace into carrito (ID, NOM_REF, NOM_TER, empresa_id, VAL_REF,COD_REF, COD_CLI, cantidad) values (
-                    (select ID from carrito where COD_REF = "${producto.COD_REF}" and COD_CLI = "${this.cliente.COD_TER}"),
-                    "${producto.NOM_REF}",
-                    "${this.cliente.NOM_TER}",
-                    ${this.empresas[this.empresa].id},
-                    ${producto.VAL_REF},
-                    "${producto.COD_REF}",
-                    "${this.cliente.COD_TER}",
-                    ${cantidad}
-                );`
-            return this.storage.query(sql);
+        let sql = `insert or replace into carrito (ID, NOM_REF, NOM_TER, empresa_id, VAL_REF,COD_REF, COD_CLI, cantidad) values (
+            (select ID from carrito where COD_REF = "${producto.COD_REF}" and COD_CLI = "${this.cliente.COD_TER}"),
+            "${producto.NOM_REF}",
+            "${this.cliente.NOM_TER}",
+            ${this.empresa},
+            ${producto.VAL_REF},
+            "${producto.COD_REF}",
+            "${this.cliente.COD_TER}",
+            ${cantidad}
+        );`
+        return this.storage.query(sql);
     }
 
     getCarrito(){
-        return this.storage.query(`SELECT * FROM carrito WHERE COD_CLI = "${this.cliente.COD_TER}"`);
+        return this.storage.query(`SELECT * FROM carrito WHERE COD_CLI = "${this.cliente.COD_TER}" AND  empresa_id = "${this.empresa}" ORDER BY ID DESC`);
+    }
+
+    getCarritoAsync(carrito){
+        return this.storage.query(`SELECT * FROM carrito WHERE COD_CLI = "${carrito.COD_CLI}" AND  empresa_id = "${this.empresa}" ORDER BY ID DESC`);
+    }
+
+    getCarritos(){
+        return this.storage.query(`SELECT Distinct sum(VAL_REF * cantidad) as total ,COD_CLI, empresa_id FROM carrito WHERE  empresa_id = "${this.empresa}" GROUP BY COD_CLI ORDER BY ID DESC`);
     }
 
     sendCarrito(carrito){
         let headers= this.setHeaders();
-        return new Promise(resolve => {
+        return new Promise((resolve,reject) => {
             this.http.post(this.data.url + "api/"+ this.empresa +"/procesarCarrito", JSON.stringify(carrito) ,{headers : headers})
             .map(res => res.json())
             .subscribe(data => {
                 resolve(data);
+            }, error => {
+                return reject(error);
             });
         });
     }
 
     getCartera(){
         let headers= this.setHeaders();
-        return new Promise(resolve => {
+        return new Promise((resolve,reject) => {
             this.http.get(this.data.url + "api/"+ this.empresa +"/getCartera", {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
                 if( data.cartera)
-                    this.storage.setJson("cartera",data.cartera);
+                this.storage.setJson("cartera",data.cartera);
                 resolve(data);
             });
         });
@@ -220,12 +230,15 @@ export class Api {
 
     getCarteraPorCliente(codigo){
         let headers= this.setHeaders();
-        return new Promise(resolve => {
+        return new Promise((resolve,reject) => {
             this.http.get(this.data.url + "api/"+ this.empresa +"/getCartera/" + codigo , {headers : headers})
             .map(res => res.json())
             .subscribe(data => {
-                if( data.cliente)
-                resolve(data);
+                if(data.cliente)
+                {
+                    data.cliente.last_update = new Date();
+                    resolve(data);
+                }
             });
         });
     }
@@ -233,9 +246,9 @@ export class Api {
     setHeaders(){
         let headers = new Headers();
         if(this.token == undefined)
-            headers.append("Authorization","Basic " + btoa(this.data.username + ":" + this.data.password));
+        headers.append("Authorization","Basic " + btoa(this.data.username + ":" + this.data.password));
         else
-            headers.append("Auth-Token", this.token);
+        headers.append("Auth-Token", this.token);
 
         headers.append("Content-Type","application/json");
         return headers;
@@ -243,7 +256,7 @@ export class Api {
 
     getDataOffline(){
         let headers= this.setHeaders();
-        return new Promise(resolve => {
+        return new Promise((resolve,reject) => {
             this.http.get(this.data.url + "api/getDataOffline", {headers : headers})
             .map(res => res.json())
             .subscribe(data => {

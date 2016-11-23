@@ -22,6 +22,7 @@
     "app/app.ts",
     "app/jquery.ts",
     "app/pages/carrito/carrito.ts",
+    "app/pages/carritos/carritos.ts",
     "app/pages/cartera-por-cliente/cartera-por-cliente.ts",
     "app/pages/cartera/cartera.ts",
     "app/pages/hello-ionic/hello-ionic.ts",

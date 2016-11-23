@@ -30,6 +30,10 @@
                 <ion-label> Trabajando {{ api.offline  ? 'Offline' : 'Online'}}</ion-label>
                 <ion-toggle  [ngModel]="api.offline" (ngModelChange)="getDataOffline($event)"></ion-toggle>
             </ion-item>
+            <ion-item>
+                <ion-label>Ultima Actualizacion</ion-label>
+                <ion-badge item-right="" *ngIf="last_update_data">{{last_update_data | date:"dd/MM/y HH:mm a"}}</ion-badge>
+            </ion-item>
         </ion-list>
         <br><br>
         <button outline  block small (click)="logout()">

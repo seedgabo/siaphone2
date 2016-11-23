@@ -2,14 +2,20 @@ import {NavController, LoadingController,AlertController,ToastController} from '
 import {Api} from "../../providers/api/api";
 import {Component} from '@angular/core';
 import { BarcodeScanner } from 'ionic-native';
+
 @Component({
     templateUrl: 'build/pages/hello-ionic/hello-ionic.html',
 })
 export class HelloIonicPage {
     username:any;
-
+    last_update_data:any = "";
     constructor(private api:Api, private nav:NavController, private loadingctrl:LoadingController,private alertctrl:AlertController, private toastctrl:ToastController) {
         this.username = this.api.data;
+        this.api.storage.get("last_update_data").then((date)=>{
+            if(date != undefined){
+                    this.last_update_data = new Date(date);
+            }
+        });
 
     }
 
@@ -79,6 +85,8 @@ export class HelloIonicPage {
                 loading.present(loading);
                 this.api.getDataOffline().then(data => {
                     loading.dismiss().then(() =>{
+                        this.api.storage.set("last_update_data", new Date());
+                        this.last_update_data = new Date();
                         this.toastctrl.create({message:"Datos Descargados Correctamente", duration: 2000, closeButtonText: "listo"}).present();
                     });
                 });
