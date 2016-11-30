@@ -19,7 +19,7 @@ export class ProductosPage {
     mostrarImagenes:boolean = false;
     procesando:boolean = false;
     query= "";
-    productos:any;
+    productos:Array<any>;
     constructor(public nav: NavController,api: Api, private toast:ToastController,private actionsheet:ActionSheetController, public alert:AlertController) {
         this.api = api;
         this.nav = nav;
@@ -98,7 +98,17 @@ export class ProductosPage {
                 this.productos = response.data;
             });
         }
+        else{
+            let response = this.productos.filter((prod)=>{
+                return prod.COD_REF.trim() ==  this.query;
+            });
+            if ( response.length == 1)
+            {
+                this.verProducto(response[0]);
+            }
+        }
     }
+
 
     presentActionSheet() {
         let Sheet = this.actionsheet.create({

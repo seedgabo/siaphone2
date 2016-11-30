@@ -53,6 +53,15 @@
                     <b primary>Dias:</b>  <span  item-right>{{ (cliente.dias) }}</span>
                 </ion-item>
                 <ion-item>
+                    <b primary>Neto:</b>  <span  item-right>{{ (cliente.neto ? 'SI' : 'NO') }}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary>Flete:</b>  <span  item-right>{{ toCurrency(cliente.flete) }}</span>
+                </ion-item>
+                <ion-item>
+                    <b primary>Dias:</b>  <span  item-right>{{ (cliente.dias) }}</span>
+                </ion-item>
+                <ion-item>
                     <b primary>Valor:</b>  <span item-right>{{ toCurrency(cliente.VALOR) }}</span>
                 </ion-item>
                 <ion-item>

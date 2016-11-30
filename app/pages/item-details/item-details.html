@@ -30,6 +30,14 @@
                 <strong>Pedidos:    </strong>{{producto.SALD_PED}}<br>
                 <strong>Existencia: </strong>{{producto.EXISTENCIA}}
             </p>
+            <ion-item>
+              <ion-label>Neto?</ion-label>
+              <ion-toggle [(ngModel)]="producto.neto" value="1"></ion-toggle>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>observación</ion-label>
+                <ion-textarea [(ngModel)]="producto.observacion"></ion-textarea>
+            </ion-item>
             <ion-row>
                 <ion-col button light (click)= "pedidos= pedidos + 1"><ion-icon name="arrow-dropup"></ion-icon></ion-col>
                 <ion-col ion-item class="center"><ion-input [(ngModel)]="pedidos" type="number"></ion-input></ion-col>

@@ -65,6 +65,7 @@ export class ItemDetailsPage {
     }
 
     imagenLocal(producto:any){
-        return cordova.file.externalApplicationStorageDirectory + this.api.empresa + "/productos/" + producto.COD_REF.trim()  + ".jpg";
+        if( typeof cordova != 'undefined' )
+            return cordova.file.externalApplicationStorageDirectory + this.api.empresa + "/productos/" + producto.COD_REF.trim()  + ".jpg";
     }
 }

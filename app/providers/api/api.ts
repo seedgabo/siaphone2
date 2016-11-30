@@ -13,7 +13,7 @@ export class Api {
     constructor(public http: Http) {
         this.initVar();
         // this.storage.query("DROP TABLE carrito");
-        this.storage.query('CREATE TABLE IF NOT EXISTS carrito (ID INTEGER PRIMARY KEY AUTOINCREMENT, NOM_REF TEXT, NOM_TER TEXT,empresa_id INTEGER, VAL_REF INTEGER, COD_REF TEXT, COD_CLI TEXT, cantidad INTEGER)');
+        this.storage.query('CREATE TABLE IF NOT EXISTS carrito (ID INTEGER PRIMARY KEY AUTOINCREMENT, NOM_REF TEXT, NOM_TER TEXT,empresa_id INTEGER, VAL_REF INTEGER, COD_REF TEXT, COD_CLI TEXT, cantidad INTEGER, neto BOOLEAN, observacion TEXT)');
     }
 
     /**
@@ -177,7 +177,9 @@ export class Api {
     }
 
     addToCart(producto,cantidad:number){
-        let sql = `insert or replace into carrito (ID, NOM_REF, NOM_TER, empresa_id, VAL_REF,COD_REF, COD_CLI, cantidad) values (
+        producto.neto = producto.neto ? 1 : 0;
+        producto.observacion = producto.observacion != undefined ? producto.observacion : '';
+        let sql = `insert or replace into carrito (ID, NOM_REF, NOM_TER, empresa_id, VAL_REF,COD_REF, COD_CLI, cantidad,neto,observacion) values (
             (select ID from carrito where COD_REF = "${producto.COD_REF}" and COD_CLI = "${this.cliente.COD_TER}"),
             "${producto.NOM_REF}",
             "${this.cliente.NOM_TER}",
@@ -185,8 +187,11 @@ export class Api {
             ${producto.VAL_REF},
             "${producto.COD_REF}",
             "${this.cliente.COD_TER}",
-            ${cantidad}
+            ${cantidad},
+            ${producto.neto},
+            "${producto.observacion}"
         );`
+        console.log(sql);
         return this.storage.query(sql);
     }
 
