@@ -52,8 +52,8 @@
                 <ion-item>
                     <b primary>Dias:</b>  <span  item-right>{{ (cliente.dias) }}</span>
                 </ion-item>
-                <ion-item>
-                    <b primary>Neto:</b>  <span  item-right>{{ (cliente.neto ? 'SI' : 'NO') }}</span>
+                <ion-item *ngIf="cliente.neto == '1'">
+                    <b primary>Neto:</b>  <span  item-right> SI </span>
                 </ion-item>
                 <ion-item>
                     <b primary>Flete:</b>  <span  item-right>{{ toCurrency(cliente.flete) }}</span>

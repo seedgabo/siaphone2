@@ -89,6 +89,9 @@ export class ProductosPage {
     }
 
     buscarProducto(){
+        if(this.api.secure_code){
+            this.query = this.query.substring(1,this.query.length -1 )
+        }
         if(!this.api.offline){
             this.procesando = true;
             this.api.searchProducto(this.query).then((response:any) =>{

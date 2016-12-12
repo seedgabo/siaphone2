@@ -173,10 +173,13 @@ export class CarritoPage {
 
     onInput(ev){
         let q = this.searchQuery;
+        if(this.api.secure_code){
+            q = q.substring(1,q.length -1 )
+        }
 
         if(q.length == 0)
             return;
-
+        console.log(q);
         let producto = Enumerable.From(this.api.productos)
         .Where((x)=> { return x.COD_REF.trim() == q.trim(); })
         .Where((x)=> { return x.empresa_id == this.api.empresa; })

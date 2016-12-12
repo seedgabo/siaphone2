@@ -10,6 +10,7 @@ export class Api {
     storage = new Storage(SqlStorage);
     data:any={};user:any={};empresas:any;empresa:any;clientes:any={};cliente:any;productos:Array<any>;token:any;cartera:Array<any>;offline:boolean;
     cartera_total:number=0;
+    secure_code=false;
     constructor(public http: Http) {
         this.initVar();
         // this.storage.query("DROP TABLE carrito");
